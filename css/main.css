@@ -1,0 +1,34 @@
+.justify-center {
+    justify-content: center;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.board {
+    display: grid;
+    grid-template:  repeat(3,10vh) / repeat(3, 10vw);
+    place-items: center;
+    border: 12px solid black;
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+    border: 6px solid black;
+
+    align-items: center;
+}
+
+.mt-5{
+    margin-top: 5vh;
+}

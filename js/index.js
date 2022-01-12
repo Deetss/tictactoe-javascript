@@ -1,28 +1,37 @@
 // GameBoard
 const GameBoard = () => {
-    let position = ['X','X','O','O','O','X','X','X','X']
-    return {position}
+    let position = ['','','','','','','','','']
+    const isValidCell = (targCell) => {
+        return targCell.innerText === "";
+    }
+    const clear = () => {
+        position = ['','','','','','','','','']
+    }
+    const markCell = (targCell, mark) => {
+        let index = targCell.dataset.id
+        position[index] = mark
+        console.log(position);
+    }
+    return {position, isValidCell, clear, markCell}
 };
 
 // Player
 const Player = (marker) => {
-    const getMarker = () => marker;
-    return {getMarker}
+    const setMarker = (newMarker) => {
+        marker = newMarker
+    };
+    return {marker, setMarker}
 }
 
 
 const DisplayController = (() => {
-    const container = document.querySelector(".game-container");
-    const drawBoard = (board_positions) => {
-        console.log("Drawing board")
-        for(let marker in board_positions){
-            let markerElem =  document.createElement("div");
-            let style = markerElem.style;
-            style.display = "flex";
-            style.flexWrap = "wrap"
-
-            markerElem.innerHTML = board_positions[marker]
-            container.appendChild(markerElem)
+    const drawBoard = (board_positions) => {    //draw markers on board
+        for(let index in board_positions){
+            let markerElem =  document.createElement("span");
+            markerElem.dataset.id = index
+    
+            markerElem.innerText = board_positions[index]
+            cells[index].appendChild(markerElem)
         }
     }
 
@@ -37,18 +46,44 @@ const Game = (() => {
     let displayController = DisplayController;
 
     const start = () => {
+        board.clear();
         setPlayers();
-        displayController.drawBoard(board.position)
+        refresh()
     }
 
     const setPlayers = () => {
-        let p1 = Player("X")
-        let p2 = Player("O")
+        let playerMarker = document.querySelector('input[name="markerSelect"]:checked').value
+        let cpuMarker = document.querySelector('input[name="markerSelect"]:not(:checked)').value
+        let p = Player(playerMarker)
+        let cpu = Player(cpuMarker)
 
-        players.push(p1)
-        players.push(p2)
+        players.push(p)
+        players.push(cpu)
     }
-    return {start, players, board}
+
+    const placeMark = (e) => {
+        let playerMark = players[0].marker
+        let targCell = e.target.firstChild
+
+        if (board.isValidCell(targCell)){
+            board.markCell(targCell, playerMark)
+            refresh()
+        }
+    }
+
+    const refresh = () => {
+        console.log(board.position);
+        displayController.drawBoard(board.position)
+    }
+    return {start, placeMark, players, board}
 })();
 
-Game.start();
+const gameStartButton = document.querySelector('#game-start')
+const boardContainer = document.querySelector(".board");
+const cells = boardContainer.querySelectorAll(".cell")
+
+cells.forEach(cell => {
+    cell.addEventListener("click", Game.placeMark)
+})
+
+gameStartButton.addEventListener("click", Game.start)

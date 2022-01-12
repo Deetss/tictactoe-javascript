@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
-  <title>Your page title here :)</title>
+  <title>TicTacToe JS</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <!-- Mobile Specific Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- FONT
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
 
-  <!-- CSS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/main.css">
 
   <script src="js/index.js" defer></script>
 
-  <!-- Favicon
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="icon" type="image/png" href="images/favicon.png">
 
 </head>
 <body>
-
-  <!-- Primary Page Layout
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <div class="container">
-    <div class="row game-container">
-      
+  <div class="container d-flex flex-column justify-center align-center">
+    <form class="d-flex justify-center">
+      <p>Pick your marker</p>
+      <input type="radio" id="X" value="X" name="markerSelect" checked>
+      <label for="X">X</label>
+      <input type="radio" id="O" value="O" name="markerSelect">
+      <label for="O">O</label>
+    </form>
+    <div class="d-flex justify-center">
+      <div class="board">
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+        <div class="cell d-flex justify-center align-center"></div>
+      </div>
+    </div>
+    <div class="mt-5">
+      <a href="#" class="button" id="game-start" >Start Game</a>
     </div>
   </div>
-
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>
