@@ -5,7 +5,9 @@ const GameBoard = () => {
         return targCell.innerText === "";
     }
     const clear = () => {
-        position = ['','','','','','','','','']
+        position.forEach((pos)=>{
+            pos = ""
+        })
     }
     const markCell = (targCell, mark) => {
         let index = targCell.dataset.id
@@ -72,7 +74,6 @@ const Game = (() => {
     }
 
     const refresh = () => {
-        console.log(board.position);
         displayController.drawBoard(board.position)
     }
     return {start, placeMark, players, board}
