@@ -1,19 +1,29 @@
 // GameBoard
 const GameBoard = () => {
-    let board = ['','','','','','','','','']
-    return {board}
+    let position = ['X','X','O','O','O','X','X','X','X']
+    return {position}
 };
 
 // Player
 const Player = (marker) => {
     const getMarker = () => marker;
+    return {getMarker}
 }
 
 
 const DisplayController = (() => {
-    const drawBoard = (board) => {
+    const container = document.querySelector(".game-container");
+    const drawBoard = (board_positions) => {
         console.log("Drawing board")
-        console.log(board);
+        for(let marker in board_positions){
+            let markerElem =  document.createElement("div");
+            let style = markerElem.style;
+            style.display = "flex";
+            style.flexWrap = "wrap"
+
+            markerElem.innerHTML = board_positions[marker]
+            container.appendChild(markerElem)
+        }
     }
 
     return {drawBoard}
@@ -27,7 +37,16 @@ const Game = (() => {
     let displayController = DisplayController;
 
     const start = () => {
-        displayController.drawBoard(board)
+        setPlayers();
+        displayController.drawBoard(board.position)
+    }
+
+    const setPlayers = () => {
+        let p1 = Player("X")
+        let p2 = Player("O")
+
+        players.push(p1)
+        players.push(p2)
     }
     return {start, players, board}
 })();
