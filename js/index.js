@@ -1,10 +1,7 @@
 // GameBoard
 const GameBoard = () => {
     let position = ['','','','','','','','','']
-    let winningPositions = [[0,1,2],[3,4,5],[6,7,8], //horizontals
-                            [0,3,6],[1,4,7],[2,5,8], //verticals
-                            [0,4,8],[2,4,6] //diag
-                        ]
+    let lastMarkedIndex;
     const getPosition =() => position;
     const isValidCell = (cellIndex) => {
         return position[cellIndex] === "";
@@ -16,6 +13,7 @@ const GameBoard = () => {
     }
     const markCell = (cellIndex, mark) => {
         position[cellIndex] = mark
+        lastMarked = cellIndex;
     }
     const unmarkedCells = () => {
         let indexes = []
@@ -24,16 +22,11 @@ const GameBoard = () => {
         })
         return indexes
     }
-
-    const hasWinner = () => {
-        winningPositions.forEach(combo => {
-            let win = false
-            combo.forEach(pos => {
-
-            })
-        })
+    const full = () => {
+        return !position.includes("")
     }
-    return {getPosition, isValidCell, clear, markCell, unmarkedCells}
+    const lastMarkedCell = () => lastMarkedIndex
+    return {getPosition, isValidCell, clear, markCell, unmarkedCells, full}
 };
 
 // Player
@@ -73,6 +66,10 @@ const Game = (() => {
     let board = GameBoard();
     let displayController = DisplayController;
     let markingPlayer;
+    let winningPositions = [[0,1,2],[3,4,5],[6,7,8], //horizontals
+                            [0,3,6],[1,4,7],[2,5,8], //verticals
+                            [0,4,8],[2,4,6] //diag
+                        ]
 
     const start = () => {
         over = false;
@@ -100,7 +97,10 @@ const Game = (() => {
 
     const placeMark = (e) => {
         markingPlayer.isCpu()
-        if(isGameOver()) return;
+        if(isGameOver()){
+            alert('Game Over')
+            return;
+        } 
         if(markingPlayer.isCpu()) return;
 
         let playerMark = players[0].getMarker();
@@ -131,6 +131,14 @@ const Game = (() => {
     }
     const turnEnd = () => {
         refresh();
+        if(hasWinner()) {
+            gameOver();
+            return
+        }
+        if(board.full()){
+            gameOver()
+            return
+        }
         changePlayers();
         turnStart();
     }
@@ -146,6 +154,27 @@ const Game = (() => {
     }
 
     const isGameOver = () => over;
+
+    const gameOver = () => {
+        over = true
+    }
+
+    const hasWinner = () => {
+        let curBoard = board.getPosition();
+        let win = false
+        winningPositions.forEach(combo => {
+            let comboMarks = []
+            combo.forEach(pos => {
+                comboMarks.push(curBoard[pos])
+            })
+
+            if(comboMarks.every((pos) => pos == markingPlayer.getMarker())){
+                win = true
+                return
+            }
+        })
+        return win
+    }
 
     return {start, placeMark}
 })();
