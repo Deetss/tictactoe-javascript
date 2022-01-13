@@ -1,39 +1,65 @@
 // GameBoard
 const GameBoard = () => {
     let position = ['','','','','','','','','']
-    const isValidCell = (targCell) => {
-        return targCell.innerText === "";
+    let winningPositions = [[0,1,2],[3,4,5],[6,7,8], //horizontals
+                            [0,3,6],[1,4,7],[2,5,8], //verticals
+                            [0,4,8],[2,4,6] //diag
+                        ]
+    const getPosition =() => position;
+    const isValidCell = (cellIndex) => {
+        return position[cellIndex] === "";
     }
     const clear = () => {
         position.forEach((pos)=>{
             pos = ""
         })
     }
-    const markCell = (targCell, mark) => {
-        let index = targCell.dataset.id
-        position[index] = mark
-        console.log(position);
+    const markCell = (cellIndex, mark) => {
+        position[cellIndex] = mark
     }
-    return {position, isValidCell, clear, markCell}
+    const unmarkedCells = () => {
+        let indexes = []
+        getPosition().forEach((p,i) => {
+            if (p == "") indexes.push(i)
+        })
+        return indexes
+    }
+
+    const hasWinner = () => {
+        winningPositions.forEach(combo => {
+            let win = false
+            combo.forEach(pos => {
+
+            })
+        })
+    }
+    return {getPosition, isValidCell, clear, markCell, unmarkedCells}
 };
 
 // Player
-const Player = (marker) => {
+const Player = (marker, cpu = false) => {
+    const getMarker = () => marker;
     const setMarker = (newMarker) => {
         marker = newMarker
     };
-    return {marker, setMarker}
+    const isCpu = () => cpu;
+
+    return {getMarker, setMarker, isCpu}
 }
 
 
 const DisplayController = (() => {
     const drawBoard = (board_positions) => {    //draw markers on board
         for(let index in board_positions){
-            let markerElem =  document.createElement("span");
-            markerElem.dataset.id = index
-    
-            markerElem.innerText = board_positions[index]
-            cells[index].appendChild(markerElem)
+            let cellSpan = cells[index].firstChild
+            if (cellSpan && cellSpan.tagName.toLowerCase() == 'span'){
+                cellSpan.innerText = board_positions[index]
+            } else {
+                let markerElem =  document.createElement("span");
+            
+                markerElem.innerText = board_positions[index]
+                cells[index].appendChild(markerElem)
+            }
         }
     }
 
@@ -42,41 +68,86 @@ const DisplayController = (() => {
 
 // Game
 const Game = (() => {
-    let over = false;
+    let over = true;
     let players = [];
     let board = GameBoard();
     let displayController = DisplayController;
+    let markingPlayer;
 
     const start = () => {
+        over = false;
         board.clear();
         setPlayers();
-        refresh()
+        turnStart();
     }
 
     const setPlayers = () => {
         let playerMarker = document.querySelector('input[name="markerSelect"]:checked').value
         let cpuMarker = document.querySelector('input[name="markerSelect"]:not(:checked)').value
         let p = Player(playerMarker)
-        let cpu = Player(cpuMarker)
+        let cpu = Player(cpuMarker, true)
 
         players.push(p)
         players.push(cpu)
+
+        if (p.getMarker() == "0") {
+            changePlayers();
+        }
+
+        markingPlayer = players[0]
+        
     }
 
     const placeMark = (e) => {
-        let playerMark = players[0].marker
-        let targCell = e.target.firstChild
+        markingPlayer.isCpu()
+        if(isGameOver()) return;
+        if(markingPlayer.isCpu()) return;
 
-        if (board.isValidCell(targCell)){
-            board.markCell(targCell, playerMark)
-            refresh()
+        let playerMark = players[0].getMarker();
+        let targCell = e.target
+
+        let cellIndex = Array.prototype.indexOf.call(cells, targCell);
+
+        if (board.isValidCell(cellIndex)){
+            board.markCell(cellIndex, playerMark)
+            turnEnd();
         }
     }
 
-    const refresh = () => {
-        displayController.drawBoard(board.position)
+    const cpuPickCell = () => {
+        let openIndexes = board.unmarkedCells()
+        let index = openIndexes[Math.floor(Math.random()*openIndexes.length)];
+        return index
     }
-    return {start, placeMark, players, board}
+
+    const turnStart = () => {
+        if(markingPlayer.isCpu()){
+            let cellIndex = cpuPickCell();
+            if (board.isValidCell(cellIndex)){
+                board.markCell(cellIndex, markingPlayer.getMarker())
+                turnEnd();
+            }
+        }
+    }
+    const turnEnd = () => {
+        refresh();
+        changePlayers();
+        turnStart();
+    }
+
+    const changePlayers = () => {
+        players.reverse();
+        console.log({cpu: players[0].isCpu()});
+        markingPlayer = players[0];
+    }
+
+    const refresh = () => {
+        displayController.drawBoard(board.getPosition())
+    }
+
+    const isGameOver = () => over;
+
+    return {start, placeMark}
 })();
 
 const gameStartButton = document.querySelector('#game-start')
